@@ -6,17 +6,21 @@ const App = @This();
 const std = @import("std");
 const kosm = @import("kosm");
 
-/// The theme file kosm owns, in tuios' themes directory. Default:
-/// `~/.config/tuios/themes/kosm.json`.
-file: []const u8 = "~/.config/tuios/themes/kosm.json",
+/// The theme file kosm owns, in tuios' themes directory; `{name}` is filled as `files` says.
+/// Default: `~/.config/tuios/themes/{name}.json`.
+file: []const u8 = "~/.config/tuios/themes/{name}.json",
+/// How `{name}` in `file` is filled: `kosm`, or the kosmos' name. Default: the theme's `files`.
+files: kosm.Theme.Files = .shared,
 /// tuios' config, where the app sets `appearance.theme` to `id`; the key must be there already.
 /// null: the config is not touched, and you select the theme yourself.
 /// Default: `~/.config/tuios/config.toml`.
 config: ?[]const u8 = "~/.config/tuios/config.toml",
-/// The theme's name, as `appearance.theme` and `tuios --theme` take it. Default: `kosm`.
-id: []const u8 = "kosm",
-/// The name tuios shows for the theme. Default: `kosm`.
-display_name: []const u8 = "kosm",
+/// The theme's name, as `appearance.theme` and `tuios --theme` take it. null (default): the
+/// theme file's name without `.json` (`kosm`).
+id: ?[]const u8 = null,
+/// The name tuios shows for the theme. null (default): the theme's `name`, or the name kosm
+/// applies the kosmos under.
+display_name: ?[]const u8 = null,
 /// The terminal's colors.
 colors: Colors = .{},
 /// The window manager's own colors.
@@ -108,6 +112,8 @@ pub fn from(theme: kosm.Theme) App {
         @field(colors, "bright_" ++ name) = variations.lightness.bright.apply(@field(colors, name).?);
     }
     return .{
+        .files = theme.files,
+        .display_name = theme.name,
         .colors = colors,
         .chrome = .{
             .accent = palette.cyan,
@@ -122,20 +128,22 @@ pub fn from(theme: kosm.Theme) App {
 
 /// Writes the theme whole, and sets `appearance.theme` in `config` unless it is null.
 pub fn apply(self: App, output: *kosm.Output) !void {
-    if (self.id.len == 0) return output.fail(self.file, "'id' is empty; tuios selects a theme by it", .{});
+    const file = try output.namedFile(self.file, self.files);
+    const id = self.id orelse std.Io.Dir.path.stem(file);
+    if (id.len == 0) return output.fail(file, "'id' is empty; tuios selects a theme by it", .{});
     var entries: std.ArrayList(kosm.Value.Entry) = .empty;
     try entries.appendSlice(output.allocator, &.{
-        .{ .key = "id", .value = .{ .string = self.id } },
-        .{ .key = "display_name", .value = .{ .string = self.display_name } },
+        .{ .key = "id", .value = .{ .string = id } },
+        .{ .key = "display_name", .value = .{ .string = try output.displayName(file, self.display_name) } },
     });
     try appendColors(output.allocator, &entries, self.colors);
     var chrome: std.ArrayList(kosm.Value.Entry) = .empty;
     try appendColors(output.allocator, &chrome, self.chrome);
     if (chrome.items.len != 0) try entries.append(output.allocator, .{ .key = "chrome", .value = .{ .table = chrome.items } });
-    try output.generate(.{ .file = self.file, .lang = "json" }, kosm.Value{ .table = entries.items });
+    try output.generate(.{ .file = file, .lang = "json" }, kosm.Value{ .table = entries.items });
     const config = self.config orelse return;
     var settings = try output.edit(.{ .files = config, .lang = "toml" });
-    try settings.set("appearance.theme", self.id);
+    try settings.set("appearance.theme", id);
 }
 
 fn appendColors(allocator: std.mem.Allocator, entries: *std.ArrayList(kosm.Value.Entry), colors: anytype) !void {
@@ -172,6 +180,7 @@ const Fixture = struct {
             .diagnostics = &fixture.diagnostics,
             .warnings = &fixture.warnings,
             .app = "tuios",
+            .kosmos = "krystallos.dark",
         };
     }
 
@@ -201,7 +210,7 @@ test "the theme is written whole and selected in the config, which keeps its oth
     try testing.expect(std.mem.startsWith(u8, written,
         \\{
         \\  "id": "kosm",
-        \\  "display_name": "kosm",
+        \\  "display_name": "krystallos.dark",
         \\  "fg": "#a3c5cc",
         \\  "bg": "#041c26",
         \\
@@ -222,5 +231,19 @@ test "a config without the theme key fails, and a null config is left alone" {
     defer other.deinit();
     const app: App = .{ .config = null, .id = "mine" };
     try app.apply(&other.output);
-    try testing.expectEqualStrings("{\n  \"id\": \"mine\",\n  \"display_name\": \"kosm\"\n}\n", other.planned("~/.config/tuios/themes/kosm.json"));
+    try testing.expectEqualStrings("{\n  \"id\": \"mine\",\n  \"display_name\": \"krystallos.dark\"\n}\n", other.planned("~/.config/tuios/themes/kosm.json"));
+}
+
+test "per kosmos, the theme is named and selected after the kosmos and shows the theme's name" {
+    var fixture: Fixture = undefined;
+    try fixture.init("[appearance]\ntheme = \"kosm\"\n");
+    defer fixture.deinit();
+    var theme = test_theme;
+    theme.name = "Krystallos";
+    theme.files = .per_kosmos;
+    try from(theme).apply(&fixture.output);
+
+    const written = fixture.planned("~/.config/tuios/themes/krystallos.dark.json");
+    try testing.expect(std.mem.startsWith(u8, written, "{\n  \"id\": \"krystallos.dark\",\n  \"display_name\": \"Krystallos\",\n"));
+    try testing.expectEqualStrings("[appearance]\ntheme = \"krystallos.dark\"\n", fixture.planned("~/.config/tuios/config.toml"));
 }
