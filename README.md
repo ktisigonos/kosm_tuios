@@ -9,10 +9,9 @@ instead (`krystallos.dark.json`, `appearance.theme = "krystallos.dark"`), so eac
 keeps its own; tuios shows the theme's `name` (`Theme.name`), or the kosmos' name when it is null. The key must be in the config already; set `config = null` to leave the config
 alone and select the theme yourself (`tuios --theme kosm`). Restart tuios to see a change.
 
-`from(theme)` sets the terminal's foreground and background from white and black (swapped in
-light mode), the 8 ANSI colors from the wheel (tuios calls magenta `purple`) and the bright
-ones a `lightness.bright` step brighter. The chrome's accent is cyan, its states green, yellow
-and red.
+`from(theme)` sets the terminal's foreground and background from the theme's roles, the 8 ANSI colors from the wheel (tuios calls magenta `purple`) and the bright
+ones a `lightness.bright` step brighter. The chrome's accent and states come from the accent,
+success, warning and error roles.
 
 ## Fields
 

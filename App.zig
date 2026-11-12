@@ -86,14 +86,14 @@ pub const Chrome = struct {
     surface: ?kosm.Color = null,
 };
 
-/// Colors from the theme: foreground and background from white and black (swapped in light
-/// mode), the 8 ANSI colors from the wheel and the bright ones a `lightness.bright` step
-/// brighter; the chrome's accent cyan and its states green, yellow and red.
+/// Colors from the theme: foreground and background from their roles, the 8 ANSI colors from
+/// the wheel and the bright ones a `lightness.bright` step brighter; the chrome's accent and
+/// states from the accent, success, warning and error roles.
 pub fn from(theme: kosm.Theme) App {
     const palette = theme.palette;
     const variations = theme.variations;
-    const foreground = if (theme.mode == .dark) palette.white else palette.black;
-    const background = if (theme.mode == .dark) palette.black else palette.white;
+    const foreground = theme.roles.foreground;
+    const background = theme.roles.background;
     var colors: Colors = .{
         .fg = foreground,
         .bg = background,
@@ -116,10 +116,10 @@ pub fn from(theme: kosm.Theme) App {
         .display_name = theme.name,
         .colors = colors,
         .chrome = .{
-            .accent = palette.cyan,
-            .success = palette.green,
-            .warning = palette.yellow,
-            .@"error" = palette.red,
+            .accent = theme.roles.accent,
+            .success = theme.roles.success,
+            .warning = theme.roles.warning,
+            .@"error" = theme.roles.@"error",
             .info = foreground,
             .surface = background,
         },
@@ -198,7 +198,7 @@ const Fixture = struct {
     }
 };
 
-const test_theme = kosm.Theme.from(.{ .black = kosm.hex("041c26"), .white = kosm.hex("a3c5cc"), .cyan = kosm.hex("2d8699") }, .dark);
+const test_theme = kosm.Theme.from(.{ .palette = .{ .black = kosm.hex("041c26"), .white = kosm.hex("a3c5cc"), .cyan = kosm.hex("2d8699") }, .mode = .dark });
 
 test "the theme is written whole and selected in the config, which keeps its other bytes" {
     var fixture: Fixture = undefined;
