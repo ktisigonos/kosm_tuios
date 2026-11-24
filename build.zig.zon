@@ -5,16 +5,16 @@
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .kosm_toml = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_toml?ref=master#59ef3131e63c15bf6e4686127b92e88b8698a776",
-            .hash = "kosm_toml-0.0.0-BgmamBfgAAAYwpK4ideLKPX2IRWSILJCgXUVRJUmzwwd",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_toml?ref=master#7a236e5206237cf48af807f74ff6642b984022be",
+            .hash = "kosm_toml-0.0.0-BgmamBfgAABKTg0Hg88vysOK58Mv6msl43HNa8HH1dBr",
         },
         .kosm_json = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_json?ref=master#125138c7ee3c5d75c2dc102fada2d6f63e6a2c7f",
-            .hash = "kosm_json-0.0.0-F6-IdUN_AACuHqsF6DZs7qidRylJvAMBBu2eZ-6b-f6m",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_json?ref=master#9333866837640fd80b5697558003075b10a60292",
+            .hash = "kosm_json-0.0.0-F6-Idb2qAAAnz7Uba-vA_Wrvh7ordV5ViIwOWs1btZQ9",
         },
         .kosm = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm?ref=master#7346ed5bfef5f16f8d3cd39d1d437e746746a2a8",
-            .hash = "kosm-0.0.0-YCShsgmjCgDiHp77PKiytuVIJmGxJFJZwID74VSnDXpM",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm?ref=master#7cac78ff369e4b85f732290cd4b415e35596c813",
+            .hash = "kosm-0.0.0-YCShsjJhGwChJLifPnNgdKvF6BvskAvM98V1N3cjOqMF",
         },
     },
     .paths = .{
