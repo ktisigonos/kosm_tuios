@@ -13,8 +13,8 @@
             .hash = "kosm_json-0.0.0-F6-Idb2qAAAnz7Uba-vA_Wrvh7ordV5ViIwOWs1btZQ9",
         },
         .kosm = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm?ref=master#7cac78ff369e4b85f732290cd4b415e35596c813",
-            .hash = "kosm-0.0.0-YCShsjJhGwChJLifPnNgdKvF6BvskAvM98V1N3cjOqMF",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm?ref=master#d00140fbc9fa4f739cd20dbbc48c01ffce7abcb1",
+            .hash = "kosm-0.0.0-YCShst2LHABjvZe3qRcG6GT7UxPnHqQYk4AOwKoAq0Kl",
         },
     },
     .paths = .{

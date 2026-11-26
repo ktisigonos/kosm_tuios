@@ -13,6 +13,8 @@ alone and select the theme yourself (`tuios --theme kosm`). Restart tuios to see
 ones a `lightness.bright` step brighter. The chrome's accent and states come from the accent,
 success, warning and error roles.
 
+`kosm doctor` checks that tuios is installed, as the `tuios` command.
+
 ## Fields
 
 | Field | Default |

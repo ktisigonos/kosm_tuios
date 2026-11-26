@@ -126,6 +126,12 @@ pub fn from(theme: kosm.Theme) App {
     };
 }
 
+/// What `kosm doctor` checks: tuios installed, as the `tuios` command.
+pub fn checkup(self: App) kosm.Checkup {
+    _ = self;
+    return .{ .program = .{ .command = "tuios" } };
+}
+
 /// Writes the theme whole, and sets `appearance.theme` in `config` unless it is null.
 pub fn apply(self: App, output: *kosm.Output) !void {
     const file = try output.namedFile(self.file, self.files);
